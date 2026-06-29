@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://centaur-entropy-lab.netlify.app/sitemap-index.xml

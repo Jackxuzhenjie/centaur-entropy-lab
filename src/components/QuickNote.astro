@@ -1,0 +1,33 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+const { article } = Astro.props;
+const { Content } = await article.render();
+const { title, date, category } = article.data;
+---
+
+<article class="max-w-2xl mx-auto">
+  <header class="mb-8">
+    <div class="flex items-center gap-3 mb-3">
+      <span class="text-xs text-accent font-medium uppercase tracking-wide bg-[#f5f0eb] px-2 py-0.5 rounded">{category} · 速览</span>
+    </div>
+    <h1 class="text-2xl font-semibold mb-3">{title}</h1>
+    <time class="text-sm text-ink-muted" datetime={date.toISOString()}>
+      {date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+    </time>
+  </header>
+
+  <div class="prose prose-sm">
+    <Content />
+  </div>
+
+  <hr class="my-8 border-[#e0dcd5]" />
+
+  <footer class="text-xs text-ink-muted">
+    本文基于公开信息，不构成投资建议。
+  </footer>
+</article>
+
+<nav class="max-w-2xl mx-auto mt-12 pt-6 border-t border-[#e0dcd5]">
+  <a href="/" class="text-sm text-accent hover:underline">← 返回首页</a>
+</nav>

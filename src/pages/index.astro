@@ -1,0 +1,73 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SEO from '../components/SEO.astro';
+
+const articles = await getCollection('articles', ({ data }) => !data.draft);
+articles.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const featured = articles.filter(a => a.data.featured);
+const categories = [...new Set(articles.map(a => a.data.category))];
+---
+
+<BaseLayout>
+  <slot name="head">
+    <SEO
+      title="半人马熵减实验室"
+      description="聚焦大消费品与零售全球化的组织治理洞察。以战略-组织-人才的三棱镜，拆解中国消费品牌的增长密码与结构性矛盾。"
+      keywords={['组织治理', '消费品', '战略', '人才', 'SWP', '品牌分析']}
+    />
+  </slot>
+
+  <section class="mb-12">
+    <h1 class="text-3xl font-semibold mb-3 tracking-tight">半人马熵减实验室</h1>
+    <p class="text-lg text-ink-light leading-relaxed max-w-xl">
+      聚焦大消费品与零售全球化的组织治理洞察。<br />
+      以战略-组织-人才的三棱镜，拆解中国消费品牌的增长密码与结构性矛盾。
+    </p>
+  </section>
+
+  {featured.length > 0 && (
+    <section class="mb-14">
+      <h2 class="text-xs uppercase tracking-[0.2em] text-ink-muted mb-6 pb-3 border-b border-[#e0dcd5]">深度分析</h2>
+      <div class="space-y-10">
+        {featured.map((a) => (
+          <article>
+            <a href={`/articles/${a.slug}`} class="no-underline hover:no-underline group block">
+              <div class="flex items-center gap-3 mb-2">
+                <span class="text-[0.7rem] text-accent font-medium uppercase tracking-wide bg-[#f5f0eb] px-2 py-0.5 rounded">{a.data.category}</span>
+                {a.data.template === 'quick-note' && <span class="text-[0.7rem] text-ink-muted">速览</span>}
+              </div>
+              <h3 class="text-xl font-semibold mb-2 group-hover:text-accent transition-colors leading-snug">
+                {a.data.title}
+              </h3>
+              <p class="text-ink-light leading-relaxed text-[0.95rem]">{a.data.excerpt}</p>
+            </a>
+            <time class="text-xs text-ink-muted mt-2 block">
+              {a.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+            </time>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="mb-14">
+    <h2 class="text-xs uppercase tracking-[0.2em] text-ink-muted mb-4">按行业浏览</h2>
+    <div class="flex flex-wrap gap-2">
+      {categories.map(cat => (
+        <span class="text-sm px-3 py-1 bg-paper-warm rounded-full text-ink-light">{cat}</span>
+      ))}
+    </div>
+  </section>
+
+  <section class="mt-16 p-6 bg-paper-warm rounded-lg">
+    <h2 class="text-sm font-semibold mb-2">订阅更新</h2>
+    <p class="text-sm text-ink-light mb-4">不定期发布消费品组织治理深度分析。不追求高频，只追求洞察密度。</p>
+    <form class="flex gap-2 max-w-md" name="subscribe" method="POST" data-netlify="true">
+      <input type="hidden" name="form-name" value="subscribe" />
+      <input type="email" name="email" placeholder="your@email.com" required class="flex-1 px-3 py-2 border border-[#d0cbc2] rounded text-sm bg-white" />
+      <button type="submit" class="px-4 py-2 bg-ink text-white text-sm rounded hover:bg-ink-light transition-colors">订阅</button>
+    </form>
+  </section>
+</BaseLayout>

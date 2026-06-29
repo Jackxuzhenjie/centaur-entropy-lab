@@ -1,0 +1,85 @@
+---
+// Reusable SEO component for consistent metadata across all pages
+export interface Props {
+  title: string;
+  description: string;
+  type?: 'website' | 'article';
+  canonicalUrl?: string;
+  ogImage?: string;
+  keywords?: string[];
+  publishedTime?: string;
+}
+
+const {
+  title,
+  description,
+  type = 'website',
+  canonicalUrl = 'https://centaur-entropy-lab.netlify.app',
+  ogImage = '/og-default.svg',
+  keywords = [],
+  publishedTime,
+} = Astro.props;
+---
+
+<!-- Canonical -->
+<link rel="canonical" href={canonicalUrl} />
+
+<!-- Open Graph -->
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={new URL(ogImage, 'https://centaur-entropy-lab.netlify.app').href} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content="半人马熵减实验室" />
+<meta property="og:locale" content="zh_CN" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={new URL(ogImage, 'https://centaur-entropy-lab.netlify.app').href} />
+
+<!-- Article specific -->
+{type === 'article' && publishedTime && (
+  <meta property="og:article:published_time" content={publishedTime} />
+)}
+
+<!-- Keywords -->
+{keywords.length > 0 && (
+  <meta name="keywords" content={keywords.join(', ')} />
+)}
+
+<!-- JSON-LD -->
+{type === 'website' ? (
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: '半人马熵减实验室',
+    alternateName: 'Centaur Entropy Lab',
+    url: 'https://centaur-entropy-lab.netlify.app',
+    description: '大消费品与零售全球化组织治理洞察。以战略-组织-人才的三棱镜，拆解中国消费品牌的增长密码与结构性矛盾。',
+    inLanguage: 'zh-CN',
+    author: {
+      '@type': 'Person',
+      name: 'Jack',
+      jobTitle: '组织治理分析师',
+      description: '前合生元CHRO，名创优品组织效率顾问。20年消费品行业组织治理实战。',
+    },
+  })} />
+) : (
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: title,
+    description: description,
+    datePublished: publishedTime,
+    author: { '@type': 'Person', name: 'Jack' },
+    publisher: {
+      '@type': 'Organization',
+      name: '半人马熵减实验室',
+      url: 'https://centaur-entropy-lab.netlify.app',
+    },
+    inLanguage: 'zh-CN',
+    isAccessibleForFree: true,
+  })} />
+)}
